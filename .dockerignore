@@ -1,0 +1,11 @@
+driver
+.venv
+*.pyc
+*.env*
+*.png
+*.log
+*.html
+
+# poetry 
+poetry.lock
+pyproject.toml

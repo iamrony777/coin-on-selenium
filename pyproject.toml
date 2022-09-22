@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "coin_in_selenium"
+version = "0.1.0"
+description = "Take screenshots from coin.zerodha.com"
+authors = ["iamrony777 <kingrony777@proton.me>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "coin_in_selenium"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+selenium = "^4.4.3"
+webdriver-manager = "^3.8.3"
+lxml = "^4.9.1"
+httpx = "^0.23.0"
+rich = "^12.5.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = {version = "^22.8.0", allow-prereleases = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
