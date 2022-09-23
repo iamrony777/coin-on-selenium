@@ -5,7 +5,3 @@ driver
 *.png
 *.log
 *.html
-
-# poetry 
-poetry.lock
-pyproject.toml
