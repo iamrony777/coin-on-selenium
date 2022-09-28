@@ -1,7 +1,11 @@
 FROM seleniarm/standalone-firefox:latest
 
 WORKDIR /app
+
+USER root
+
 COPY ./ /app/
+
 RUN mkdir screenshot
 
 ENV PYTHONPATH="." \

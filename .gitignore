@@ -1,4 +1,6 @@
 driver
+screenshot
+log
 .venv
 *.pyc
 *.env*

@@ -12,13 +12,16 @@ from coin_in_selenium.resources.portfolio import Portfolio
 from coin_in_selenium.resources.report import generate_report
 from coin_in_selenium import log
 
-
-service = Service(
-    executable_path="/usr/local/bin/geckodriver",
-    env={"MOZ_HEADLESS": "1"},  # FOR HEADLESS
-    # env={"DISPLAY": ":99.0"},  # TO DISPLAY
-)
-
+if int(getenv("HEADLESS")):
+    service = Service(
+        executable_path="/usr/local/bin/geckodriver",
+        env={"MOZ_HEADLESS": "1"},  # FOR HEADLESS
+    )
+else:
+    service = Service(
+        executable_path="/usr/local/bin/geckodriver",
+        env={"DISPLAY": f":{getenv('DISPLAY', '0.0')}"},  # TO DISPLAY
+    )
 option = Options()
 option.binary = "/usr/bin/firefox"
 with webdriver.Firefox(service=service, options=option) as driver:
@@ -45,7 +48,10 @@ with webdriver.Firefox(service=service, options=option) as driver:
     sleep(int(getenv("WAIT", "5")))
 
     # PIN
-    driver.find_element(By.CSS_SELECTOR, "#pin").send_keys(getenv("ZERODHA_PIN"))
+    driver.find_element(
+        By.CSS_SELECTOR,
+        "#container > div > div > div.login-form > form > div.su-input-group.su-static-label.su-has-icon.twofa-value > input[type=password]",
+    ).send_keys(getenv("ZERODHA_PIN"))
 
     # SUBMIT (2/2) - LOGIN
     driver.find_element(By.CLASS_NAME, "button-orange.wide").send_keys(Keys.ENTER)
@@ -60,20 +66,17 @@ with webdriver.Firefox(service=service, options=option) as driver:
     with open("screenshot/screenshot.png", "wb") as __input:
         __input.write(driver.get_screenshot_as_png())
 
-    report = (
-        generate_report(
-            photo_path=path.join(getcwd(), "screenshot", "screenshot.png"),
-            current=pf.get_current(),
-            invested=pf.get_invested(),
-            pnl=pf.get_pnl(),
-        )
+    report = generate_report(
+        photo_path=path.join(getcwd(), "screenshot", "screenshot.png"),
+        current=pf.get_current(),
+        invested=pf.get_invested(),
+        pnl=pf.get_pnl(),
     )
 
     if report["ok"]:
         log.info(report)
     else:
         log.error(report)
-
 
     # if input("EXIT?") == "y":
     sys.exit(0)
