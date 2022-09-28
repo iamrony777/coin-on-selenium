@@ -1,23 +1,19 @@
 FROM seleniarm/standalone-firefox:latest
-
 WORKDIR /app
-
 USER root
-
 COPY ./ /app/
+RUN mkdir screenshot cache logs
 
-RUN mkdir screenshot
+ENV DEBIAN_FRONTEND="noninteractive"
 
-ENV PYTHONPATH="." \
-    PATH="${PATH}:${HOME}/.local/bin"
+ENV PYTHONPATH="."
 
-RUN sudo apt-get update
+RUN apt update && \
+    apt install python3 python3-pip -y
 
-RUN sudo apt-get install python3-pip -y && \
-    sudo apt-get autoremove -y
+RUN apt install ca-certificates git build-essential gcc -y && \
+    apt autoremove -y
 
-RUN pip3 install --no-cache-dir -U poetry
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-RUN poetry install --no-ansi --no-cache --without=dev
-
-CMD ["poetry", "run", "python3", "coin_in_selenium/app.py"]
+CMD ["python3", "coin_in_selenium/app.py"]

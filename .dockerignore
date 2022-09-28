@@ -1,5 +1,11 @@
 driver
+cache
+logs
+coin_in_selenium/tests
+screenshot
+log
 .venv
+*.json
 *.pyc
 *.env*
 *.png

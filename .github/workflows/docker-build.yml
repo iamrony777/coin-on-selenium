@@ -35,6 +35,6 @@ jobs:
           context: .
           platforms: linux/amd64, linux/arm64
           push: true
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/coin-on-selenium:cache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/coin-on-selenium:cache,mode=max
-          tags: ${{ secrets.DOCKER_USERNAME }}/coin-on-selenium:latest, ${{ secrets.DOCKER_USERNAME }}/coin-on-selenium:${{ env.DOCKER_IMAGE_VERSION }}
+          # cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/coin-on-selenium:cache
+          # cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/coin-on-selenium:cache,mode=max
+          tags: ${{ secrets.DOCKER_USERNAME }}/raspberry:coin-on-selenium

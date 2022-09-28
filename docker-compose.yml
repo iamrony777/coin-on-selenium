@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  selenium:
+    container_name: coin-in-selenium
+    image: iamrony777/raspberry:coin-on-selenium
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - logs:/app/logs:rw
+      - cache:/app/cache:rw
+      - screenshot:/app/screenshot:rw    
+    network_mode: host
+
+
+volumes:
+  logs:
+  cache:
+  screenshot:
+
+
