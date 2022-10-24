@@ -3,6 +3,7 @@ cache
 logs
 coin_in_selenium/tests
 screenshot
+custom-*
 log
 .venv
 *.json

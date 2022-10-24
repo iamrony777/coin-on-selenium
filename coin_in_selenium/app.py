@@ -2,7 +2,7 @@ import sys
 from os import getcwd, getenv, path
 from time import sleep
 
-from webdriver_manager.firefox import GeckoDriverManager
+# from webdriver_manager.firefox import GeckoDriverManager
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -20,14 +20,14 @@ protonmail = Protonmail(getenv("PROTON_USERNAME"), getenv("PROTON_PASSWORD"))
 if int(getenv("HEADLESS")):
     logging.debug("GOING HEADLESS")
     service = Service(
-        executable_path=GeckoDriverManager(path="cache/").install(),
+        executable_path="/usr/local/bin/geckodriver",
         log_path="logs/geckodriver.log",
         env={"MOZ_HEADLESS": "1"},  # FOR HEADLESS
     )
 else:
     logging.debug("OPENING BROWSER")
     service = Service(
-        executable_path=GeckoDriverManager(path="cache/").install(),
+        executable_path="/usr/local/bin/geckodriver",
         log_path="logs/geckodriver.log",
         env={"DISPLAY": f":{getenv('DISPLAY', '0.0')}".removeprefix(":")},  # TO DISPLAY
     )
