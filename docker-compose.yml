@@ -8,7 +8,7 @@ services:
       #context: .
       #dockerfile: Dockerfile
     env_file:
-      - .env.org
+      - .env
     volumes:
       - logs:/app/logs:rw
       - cache:/app/cache:rw
@@ -19,6 +19,7 @@ services:
           limits:
             cpus: '0.20'
             memory: 400M
+    command: ["python3", "coin_in_selenium/app.py"]
 
 
 volumes:

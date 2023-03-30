@@ -36,7 +36,7 @@ class Protonmail:
                     session = loads(_input.read())
                     if len(session) == 0:
 
-                        logging.debug("Empty session file found")
+                        logging.warning("Empty session file found")
                         raise Exception
                     logging.info("Found session file")
                     proton_session = Session.load(
@@ -49,7 +49,7 @@ class Protonmail:
             except Exception as exception:
                 logging.error(exception)
                 with open(self.session_file, "w", encoding="utf-8") as _output:
-                    logging.debug("Empty session file found, login into Protonmail")
+                    logging.info("Empty session file found, login into Protonmail")
                     proton_session = Session(
                         api_url="https://account.proton.me/api",
                         appversion="web-account@5.0.22.1",
@@ -64,7 +64,7 @@ class Protonmail:
                     _output.write(dumps(proton_session.dump(), indent=4))
         else:
             with open(self.session_file, "w", encoding="utf-8") as _output:
-                logging.debug("Session file not found, login into Protonmail")
+                logging.warning("Session file not found, login into Protonmail")
                 proton_session = Session(
                     api_url="https://account.proton.me/api",
                     appversion="web-account@5.0.22.1",

@@ -1,5 +1,5 @@
 import sys
-from os import getcwd, getenv, path
+from os import getcwd, getenv, path, remove
 from time import sleep
 
 from webdriver_manager.chrome import ChromeDriverManager
@@ -18,6 +18,7 @@ from coin_in_selenium.resources.report import generate_report
 
 protonmail = Protonmail(getenv("PROTON_USERNAME"), getenv("PROTON_PASSWORD"))
 option = Options()
+option.binary_location = "/usr/bin/chromium"
 
 match getenv("ENVIORNMENT"):
     case "dev":
@@ -42,7 +43,7 @@ match getenv("ENVIORNMENT"):
         ## in production, chromium will start in headless mode, and will use least memory possible
 
         service = Service(
-            executable_path="/usr/bin/chromium",
+            executable_path="/usr/bin/chromedriver",
             log_path="logs/chromium.log",
             start_error_message="Failed to start , try again",
         )
@@ -66,7 +67,6 @@ match getenv("ENVIORNMENT"):
         option.add_argument("--enable-low-end-device-mode")
         option.add_argument("--single-process")
         option.add_argument("--renderer-process-limit=2")
-
 
 with webdriver.Chrome(
     service=service,
@@ -97,7 +97,7 @@ with webdriver.Chrome(
     sleep(int(getenv("WAIT", "5")))
 
     # "Problem with External TOTP?"
-    driver.find_element(By.CLASS_NAME, "text-light.forgot-link").click()
+    driver.find_element(By.CSS_SELECTOR, "a.text-light.forgot-link").click()
 
     sleep(20)
     # "SMS/Email OTP"
@@ -118,8 +118,7 @@ with webdriver.Chrome(
         ".su-input-group > input:nth-child(2)",
     ).send_keys(otp_code)
 
-    if getenv("ENVIRONMENT") == "prod":
-        sleep(int(getenv("WAIT", "5")))
+    sleep(int(getenv("WAIT", "5")))
     
     driver.get("https://coin.zerodha.com/dashboard/mf/portfolio")
     
@@ -127,22 +126,26 @@ with webdriver.Chrome(
 
     pf = Portfolio(driver.page_source)
 
-    driver.get_screenshot_as_file("screenshot/screenshot.png")
+    # driver.get_screenshot_as_file("screenshot/screenshot.png")
+    # driver.
+    body_element = driver.find_element(By.TAG_NAME, 'body')
+    if body_element.screenshot("screenshot/screenshot.png"):
 
-    report = generate_report(
-        photo_path=path.join(getcwd(), "screenshot", "screenshot.png"),
-        current=pf.get_current(),
-        invested=pf.get_invested(),
-        pnl=pf.get_pnl(),
-    )
+        report = generate_report(
+            photo_path=path.join(getcwd(), "screenshot", "screenshot.png"),
+            current=pf.get_current(),
+            invested=pf.get_invested(),
+            pnl=pf.get_pnl(),
+        )
 
-    if report["ok"]:
-        logging.info(report)
-    else:
-        logging.error(report)
+        if report["ok"]:
+            logging.info(report)
+        else:
+            logging.error(report)
 
     driver.get("https://coin.zerodha.com/logout")  # LOGOUT from Zerodha
     sleep(int(getenv("WAIT", "5")))
 
     protonmail.proton_session.logout()
+    remove(protonmail.session_file)
     sys.exit(0)

@@ -16,4 +16,4 @@ RUN apt install ca-certificates git build-essential gcc -y && \
 
 RUN pip3 install --break-system-packages --no-cache-dir -r requirements.txt
 
-CMD ["python3", "coin_in_selenium/app.py"]
+CMD ["bash"]
