@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND="noninteractive"
 ENV PYTHONPATH="."
 
 RUN apt update && \
-    apt install python3 python3-pip -y
+    apt install python3-full python3-dev python3-pip -y
 
 RUN apt install ca-certificates git build-essential gcc -y && \
     apt autoremove -y
