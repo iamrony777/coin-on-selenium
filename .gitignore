@@ -6,6 +6,7 @@ screenshot
 custom-*
 log
 .venv
+.env*
 *.json
 *.pyc
 *.env*

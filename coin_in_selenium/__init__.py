@@ -9,7 +9,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("rich")
 
-load_dotenv(".env")
+load_dotenv(".env.org")
 makedirs("screenshot", exist_ok=True)
 makedirs("logs", exist_ok=True)
 makedirs("cache", exist_ok=True)

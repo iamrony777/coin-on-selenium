@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "coin_in_selenium"
-version = "0.1.2"
+version = "0.1.3"
 description = "Take screenshots from coin.zerodha.com"
 authors = ["iamrony777 <kingrony777@proton.me>"]
 license = "MIT"
@@ -10,7 +10,7 @@ packages = [{include = "coin_in_selenium"}]
 [tool.poetry.dependencies]
 python = "^3.9"
 selenium = "^4.4.3"
-lxml = "^4.9.1"
+lxml = "^4.9.2"
 httpx = "^0.23.0"
 rich = "^12.5.1"
 python-dotenv = "^0.21.0"

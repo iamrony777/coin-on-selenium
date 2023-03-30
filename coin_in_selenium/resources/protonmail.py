@@ -1,5 +1,6 @@
 import os
 from json import dumps, loads
+import shutil
 from platform import freedesktop_os_release, system
 
 from proton.api import Session
@@ -51,7 +52,7 @@ class Protonmail:
                     logging.debug("Empty session file found, login into Protonmail")
                     proton_session = Session(
                         api_url="https://account.proton.me/api",
-                        appversion="web-account@5.0.9.9",
+                        appversion="web-account@5.0.22.1",
                         user_agent=self.user_agent,
                         tls_pinning=False,
                         log_dir_path=os.getcwd() + "/logs",
@@ -66,7 +67,7 @@ class Protonmail:
                 logging.debug("Session file not found, login into Protonmail")
                 proton_session = Session(
                     api_url="https://account.proton.me/api",
-                    appversion="web-account@5.0.9.9",
+                    appversion="web-account@5.0.22.1",
                     user_agent=self.user_agent,
                     tls_pinning=False,
                     log_dir_path=os.getcwd() + "/logs",
@@ -76,6 +77,8 @@ class Protonmail:
                 proton_session.enable_alternative_routing = False
                 proton_session.authenticate(self.username, self.password)
                 _output.write(dumps(proton_session.dump(), indent=4))
+
+
 
         return proton_session
 
@@ -94,6 +97,7 @@ class Protonmail:
                 "Desc": 1,
                 "Unread": 1,
             }
+        self.proton_session._Session__api_url = 'https://mail.proton.me/api'
         emails_recieved = self.proton_session.api_request(
             "/mail/v4/conversations",
             params=params,
@@ -116,6 +120,8 @@ class Protonmail:
             return self.proton_session.api_request(
                 endpoint="/mail/v4/conversations/read", jsondata=data, method="PUT"
             )
+
+    # def clean_up():
 
 
 if __name__ == "__main__":

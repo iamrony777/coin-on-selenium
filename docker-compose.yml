@@ -3,17 +3,22 @@ version: '3'
 services:
   selenium:
     container_name: coin-in-selenium
-    image: iamrony777/raspberry:coin-on-selenium
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: iamrony777/raspberry:coin-in-selenium
+      #build:
+      #context: .
+      #dockerfile: Dockerfile
     env_file:
-      - .env
+      - .env.org
     volumes:
       - logs:/app/logs:rw
       - cache:/app/cache:rw
       - screenshot:/app/screenshot:rw    
     network_mode: host
+    deploy:
+        resources:
+          limits:
+            cpus: '0.20'
+            memory: 400M
 
 
 volumes:

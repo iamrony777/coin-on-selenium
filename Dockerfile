@@ -1,4 +1,4 @@
-FROM seleniarm/standalone-firefox:latest
+FROM seleniarm/standalone-chromium:latest
 WORKDIR /app
 USER root
 COPY ./ /app/
