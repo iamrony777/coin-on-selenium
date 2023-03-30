@@ -82,6 +82,9 @@ with webdriver.Chrome(
     login.click()
     logging.debug(driver.current_url)
 
+    if getenv("ENVIRONMENT") == "prod":
+        sleep(int(getenv("WAIT", "5")))
+
     # USER ID
     driver.find_element(By.CSS_SELECTOR, "#userid").send_keys(getenv("ZERODHA_ID"))
 
@@ -115,7 +118,11 @@ with webdriver.Chrome(
         ".su-input-group > input:nth-child(2)",
     ).send_keys(otp_code)
 
+    if getenv("ENVIRONMENT") == "prod":
+        sleep(int(getenv("WAIT", "5")))
+    
     driver.get("https://coin.zerodha.com/dashboard/mf/portfolio")
+    
     sleep(int(getenv("WAIT", "5")))
 
     pf = Portfolio(driver.page_source)
