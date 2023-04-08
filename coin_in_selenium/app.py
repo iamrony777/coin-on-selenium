@@ -18,7 +18,6 @@ from coin_in_selenium.resources.report import generate_report
 
 protonmail = Protonmail(getenv("PROTON_USERNAME"), getenv("PROTON_PASSWORD"))
 option = Options()
-option.binary_location = "/usr/bin/chromium"
 
 match getenv("ENVIORNMENT"):
     case "dev":
@@ -30,7 +29,7 @@ match getenv("ENVIORNMENT"):
                 log_path="logs/chromium.log",
                 start_error_message="FAILED",
             )
-            option.add_argument("--headless")
+            option.headless = True
         else:
             logging.debug("Using Headful mode")
             service = Service(
@@ -47,7 +46,8 @@ match getenv("ENVIORNMENT"):
             log_path="logs/chromium.log",
             start_error_message="Failed to start , try again",
         )
-        option.add_argument("--headless")
+        option.headless = True
+        option.binary_location = "/usr/bin/chromium"
         option.add_argument("--aggressive-cache-discard")
         option.add_argument("--aggressive-tab-discard")
         option.add_argument("--disable-accelerated-2d-canvas")
@@ -76,76 +76,81 @@ with webdriver.Chrome(
 
     driver.get("https://coin.zerodha.com/")
 
-    login = driver.find_element(
-        By.CSS_SELECTOR, ".redirect-btn-container > a:nth-child(1)"
-    )
-    login.click()
-    logging.debug(driver.current_url)
+    total_width = driver.execute_script("return document.body.offsetWidth")
+    total_height = driver.execute_script("return document.body.scrollHeight")
+    driver.set_window_size(total_width, total_height)
 
-    if getenv("ENVIRONMENT") == "prod":
-        sleep(int(getenv("WAIT", "5")))
 
-    # USER ID
-    driver.find_element(By.CSS_SELECTOR, "#userid").send_keys(getenv("ZERODHA_ID"))
 
-    # PASSWORD
-    driver.find_element(By.CSS_SELECTOR, "#password").send_keys(getenv("ZERODHA_PASS"))
 
-    # SUBMIT (1/2) - USER_ID , PASSWORD
-    driver.find_element(By.CLASS_NAME, "button-orange.wide").send_keys(Keys.ENTER)
+    # login = driver.find_element(
+    #     By.CSS_SELECTOR, ".redirect-btn-container > a:nth-child(1)"
+    # )
+    # login.click()
+    # logging.debug(driver.current_url)
 
-    sleep(int(getenv("WAIT", "5")))
+    # if getenv("ENVIRONMENT") == "prod":
+    #     sleep(int(getenv("WAIT", "5")))
 
-    # "Problem with External TOTP?"
-    driver.find_element(By.CSS_SELECTOR, "a.text-light.forgot-link").click()
+    # # USER ID
+    # driver.find_element(By.CSS_SELECTOR, "#userid").send_keys(getenv("ZERODHA_ID"))
 
-    sleep(20)
-    # "SMS/Email OTP"
-    driver.find_element(By.CSS_SELECTOR, "a.twofa-option").click()
+    # # PASSWORD
+    # driver.find_element(By.CSS_SELECTOR, "#password").send_keys(getenv("ZERODHA_PASS"))
 
-    # PIN , Sent by "noreply@alertsmailer.zerodha.net", pin is in message and subject section
-    otp_code = None
-    while otp_code is None:
+    # # SUBMIT (1/2) - USER_ID , PASSWORD
+    # driver.find_element(By.CLASS_NAME, "button-orange.wide").send_keys(Keys.ENTER)
 
-        otp_code = protonmail.get_subject_by_sender("noreply@alertsmailer.zerodha.net")
-        if otp_code is not None:
-            otp_code = otp_code.split(" ", maxsplit=1)[0]
-            break
-        sleep(int(getenv("WAIT", "5")))
+    # sleep(int(getenv("WAIT", "5")))
 
-    driver.find_element(
-        By.CSS_SELECTOR,
-        ".su-input-group > input:nth-child(2)",
-    ).send_keys(otp_code)
+    # # "Problem with External TOTP?"
+    # driver.find_element(By.CSS_SELECTOR, "a.text-light.forgot-link").click()
 
-    sleep(int(getenv("WAIT", "5")))
+    # sleep(20)
+    # # "SMS/Email OTP"
+    # driver.find_element(By.CSS_SELECTOR, "a.twofa-option").click()
+
+    # # PIN , Sent by "noreply@alertsmailer.zerodha.net", pin is in message and subject section
+    # otp_code = None
+    # while otp_code is None:
+
+    #     otp_code = protonmail.get_subject_by_sender("noreply@alertsmailer.zerodha.net")
+    #     if otp_code is not None:
+    #         otp_code = otp_code.split(" ", maxsplit=1)[0]
+    #         break
+    #     sleep(int(getenv("WAIT", "5")))
+
+    # driver.find_element(
+    #     By.CSS_SELECTOR,
+    #     ".su-input-group > input:nth-child(2)",
+    # ).send_keys(otp_code)
+
+    # sleep(int(getenv("WAIT", "5")))
     
-    driver.get("https://coin.zerodha.com/dashboard/mf/portfolio")
+    # driver.get("https://coin.zerodha.com/dashboard/mf/portfolio")
     
-    sleep(int(getenv("WAIT", "5")))
+    # sleep(int(getenv("WAIT", "5")))
 
-    pf = Portfolio(driver.page_source)
+    # pf = Portfolio(driver.page_source)
 
-    # driver.get_screenshot_as_file("screenshot/screenshot.png")
-    # driver.
-    body_element = driver.find_element(By.TAG_NAME, 'body')
-    if body_element.screenshot("screenshot/screenshot.png"):
+    # body_element = driver.find_element(By.TAG_NAME, 'body')
+    # if body_element.screenshot("screenshot/screenshot.png"):
 
-        report = generate_report(
-            photo_path=path.join(getcwd(), "screenshot", "screenshot.png"),
-            current=pf.get_current(),
-            invested=pf.get_invested(),
-            pnl=pf.get_pnl(),
-        )
+    #     report = generate_report(
+    #         photo_path=path.join(getcwd(), "screenshot", "screenshot.png"),
+    #         current=pf.get_current(),
+    #         invested=pf.get_invested(),
+    #         pnl=pf.get_pnl(),
+    #     )
 
-        if report["ok"]:
-            logging.info(report)
-        else:
-            logging.error(report)
+    #     if report["ok"]:
+    #         logging.info(report)
+    #     else:
+    #         logging.error(report)
 
-    driver.get("https://coin.zerodha.com/logout")  # LOGOUT from Zerodha
-    sleep(int(getenv("WAIT", "5")))
+    # driver.get("https://coin.zerodha.com/logout")  # LOGOUT from Zerodha
+    # sleep(int(getenv("WAIT", "5")))
 
-    protonmail.proton_session.logout()
-    remove(protonmail.session_file)
+    # protonmail.proton_session.logout()
+    # remove(protonmail.session_file)
     sys.exit(0)

@@ -1,7 +1,7 @@
 import os
 from json import dumps, loads
 import shutil
-from platform import freedesktop_os_release, system
+from platform import freedesktop_os_release, system, win32_ver
 
 from proton.api import Session
 
@@ -24,9 +24,14 @@ class Protonmail:
     def _gen_user_agent(self) -> str:
         _user_agent = ""
         _user_agent += f"{system()};"
-        for key in freedesktop_os_release().items():
-            if key[0] in ["ID", "VERSION_ID"]:
-                _user_agent += key[1]
+
+        match _user_agent:
+            case "Linux;":
+                for key in freedesktop_os_release().items():
+                    if key[0] in ["ID", "VERSION_ID"]:
+                        _user_agent += key[1]
+            case "Windows;":
+                _user_agent += win32_ver()[1]
         return _user_agent
 
     def _get_session(self) -> Session:
